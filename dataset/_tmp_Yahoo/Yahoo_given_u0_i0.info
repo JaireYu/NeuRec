@@ -286,3 +286,11 @@ The number of ratings: 303255
 Average actions of users: 5.39
 Average actions of items: 466.55
 The sparsity of the dataset: 99.171174%
+2020-09-05 12:12:16.956: Yahoo_given_u0_i0
+2020-09-05 12:12:16.956: Dataset name: Yahoo
+The number of users: 56290
+The number of items: 650
+The number of ratings: 303255
+Average actions of users: 5.39
+Average actions of items: 466.55
+The sparsity of the dataset: 99.171174%
