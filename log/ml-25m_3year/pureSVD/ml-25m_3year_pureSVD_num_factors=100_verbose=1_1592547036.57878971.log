@@ -1,0 +1,34 @@
+2020-06-19 14:10:36.579: Dataset name: ml-25m_3year
+The number of users: 27318
+The number of items: 46362
+The number of ratings: 3924093
+Average actions of users: 143.64
+Average actions of items: 84.64
+The sparsity of the dataset: 99.690167%
+2020-06-19 14:10:36.579: 
+
+NeuRec hyperparameters:
+recommender=pureSVD
+config_dir=conf
+gpu_id=0
+gpu_mem=0.5
+data.input.path=dataset
+data.input.dataset=ml-25m_3year
+data.column.format=UIRT
+data.convert.separator=','
+user_min=0
+item_min=0
+splitter=given
+ratio=0.8
+by_time=False
+metric=["Precision", "Recall", "NDCG", "MAP", "MRR"]
+topk=[10, 20]
+group_view=None
+rec.evaluate.neg=0
+test_batch_size=128
+num_thread=8
+
+pureSVD's hyperparameters:
+num_factors=100
+verbose=1
+

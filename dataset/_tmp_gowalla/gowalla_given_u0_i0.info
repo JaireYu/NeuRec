@@ -1,0 +1,32 @@
+2020-06-16 16:50:31.473: gowalla_given_u0_i0
+2020-06-16 16:50:31.473: Dataset name: gowalla
+The number of users: 29858
+The number of items: 40981
+The number of ratings: 1027370
+Average actions of users: 34.41
+Average actions of items: 25.07
+The sparsity of the dataset: 99.916038%
+2020-06-16 17:55:29.213: gowalla_given_u0_i0
+2020-06-16 17:55:29.214: Dataset name: gowalla
+The number of users: 29858
+The number of items: 40981
+The number of ratings: 1244612
+Average actions of users: 41.68
+Average actions of items: 30.37
+The sparsity of the dataset: 99.898284%
+2020-06-16 17:57:51.837: gowalla_given_u0_i0
+2020-06-16 17:57:51.837: Dataset name: gowalla
+The number of users: 29858
+The number of items: 40981
+The number of ratings: 1244612
+Average actions of users: 41.68
+Average actions of items: 30.37
+The sparsity of the dataset: 99.898284%
+2020-06-16 18:00:24.393: gowalla_given_u0_i0
+2020-06-16 18:00:24.393: Dataset name: gowalla
+The number of users: 29858
+The number of items: 40981
+The number of ratings: 1243116
+Average actions of users: 41.63
+Average actions of items: 30.33
+The sparsity of the dataset: 99.898406%

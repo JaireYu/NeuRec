@@ -1,0 +1,48 @@
+2020-06-16 18:00:31.575: Dataset name: gowalla
+The number of users: 29858
+The number of items: 40981
+The number of ratings: 1027370
+Average actions of users: 34.41
+Average actions of items: 25.07
+The sparsity of the dataset: 99.916038%
+2020-06-16 18:00:31.576: 
+
+NeuRec hyperparameters:
+recommender=MF
+config_dir=./conf
+gpu_id=0
+gpu_mem=0.5
+data.input.path=dataset
+data.input.dataset=gowalla
+data.column.format=UI
+data.convert.separator=','
+user_min=0
+item_min=0
+splitter=given
+ratio=0.8
+by_time=False
+metric=["Precision", "Recall", "NDCG", "MAP", "MRR"]
+topk=[10, 20]
+group_view=None
+rec.evaluate.neg=0
+test_batch_size=128
+num_thread=8
+
+MF's hyperparameters:
+epochs=300
+batch_size=512
+embedding_size=64
+reg_mf=0.0
+learning_rate=0.001
+learner=adam
+num_negatives=1
+is_pairwise=True
+loss_function=bpr
+init_method=normal
+stddev=0.01
+verbose=1
+
+2020-06-16 18:00:31.876: metrics:	Precision@10	Precision@20	Recall@10   	Recall@20   	NDCG@10     	NDCG@20     	MAP@10      	MAP@20      	MRR@10      	MRR@20      
+2020-06-16 18:01:41.836: [iter 1 : loss : 0.636703, time: 67.511736]
+2020-06-16 18:01:48.175: epoch 1:	0.03456654  	0.02501567  	0.05022060  	0.07209153  	0.05967421  	0.06491271  	0.12817341  	0.12366394  	0.13682015  	0.14166269  
+2020-06-16 18:01:54.155: epoch 1:	0.03460864  	0.02504319  	0.05030877  	0.07219163  	0.05979365  	0.06503972  	0.12852202  	0.12391100  	0.13717186  	0.14201152  

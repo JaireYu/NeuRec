@@ -1,0 +1,47 @@
+2020-07-24 06:53:55.228: Dataset name: ml-25m_3year
+The number of users: 27318
+The number of items: 46362
+The number of ratings: 3924093
+Average actions of users: 143.64
+Average actions of items: 84.64
+The sparsity of the dataset: 99.690167%
+2020-07-24 06:53:55.228: 
+
+NeuRec hyperparameters:
+recommender=FISM
+config_dir=/ghome/yujr/NeuRec/conf
+gpu_id=0
+gpu_mem=0.5
+data.input.path=/ghome/yujr/NeuRec/dataset
+data.input.dataset=ml-25m_3year
+data.column.format=UIRT
+data.convert.separator=','
+user_min=0
+item_min=0
+splitter=given
+ratio=0.8
+by_time=False
+metric=["Precision", "Recall", "NDCG", "MAP", "MRR"]
+topk=[10, 20]
+group_view=None
+rec.evaluate.neg=0
+test_batch_size=128
+num_thread=8
+
+FISM's hyperparameters:
+epochs=100
+batch_size=1024
+embedding_size=64
+gamma=0.0001
+lambda=0.0001
+alpha=0.5
+learning_rate=0.001
+learner=adam
+is_pairwise=False
+num_neg=4
+loss_function=cross_entropy
+init_method=normal
+stddev=0.01
+verbose=10
+
+2020-07-24 06:53:57.352: metrics:	Precision@10	Precision@20	Recall@10   	Recall@20   	NDCG@10     	NDCG@20     	MAP@10      	MAP@20      	MRR@10      	MRR@20      

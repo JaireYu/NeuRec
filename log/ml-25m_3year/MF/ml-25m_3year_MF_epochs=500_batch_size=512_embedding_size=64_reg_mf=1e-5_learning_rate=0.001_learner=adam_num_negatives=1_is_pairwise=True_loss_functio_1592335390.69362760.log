@@ -1,0 +1,45 @@
+2020-06-16 19:23:10.734: Dataset name: ml-25m_3year
+The number of users: 27318
+The number of items: 46362
+The number of ratings: 3924093
+Average actions of users: 143.64
+Average actions of items: 84.64
+The sparsity of the dataset: 99.690167%
+2020-06-16 19:23:10.734: 
+
+NeuRec hyperparameters:
+recommender=MF
+config_dir=/ghome/yangzy/NeuRec/conf
+gpu_id=0
+gpu_mem=0.5
+data.input.path=/ghome/yangzy/NeuRec/dataset
+data.input.dataset=ml-25m_3year
+data.column.format=UIRT
+data.convert.separator=,
+user_min=0
+item_min=0
+splitter=given
+ratio=0.8
+by_time=False
+metric=["Precision", "Recall", "NDCG", "MAP", "MRR"]
+topk=[10, 20]
+group_view=None
+rec.evaluate.neg=0
+test_batch_size=128
+num_thread=8
+
+MF's hyperparameters:
+epochs=500
+batch_size=512
+embedding_size=64
+reg_mf=1e-5
+learning_rate=0.001
+learner=adam
+num_negatives=1
+is_pairwise=True
+loss_function=bpr
+init_method=normal
+stddev=0.01
+verbose=1
+
+2020-06-16 19:23:11.051: metrics:	Precision@10	Precision@20	Recall@10   	Recall@20   	NDCG@10     	NDCG@20     	MAP@10      	MAP@20      	MRR@10      	MRR@20      
