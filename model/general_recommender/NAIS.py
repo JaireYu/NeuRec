@@ -255,10 +255,10 @@ class NAIS(AbstractRecommender):
                                          num_idx_neg, item_input_pos, item_input_neg,
                                          batch_size=self.batch_size, shuffle=True)
             else:
-                user_input, num_idx, item_input, labels, batch_length = \
-                 data_generator._get_pointwise_all_likefism_data_debug_fast(self.dataset, self.num_negatives, self.train_dict)
-                #data_iter = DataIterator(user_input, num_idx, item_input, labels,
-                #                         batch_size=self.batch_size, shuffle=False)
+                user_input, num_idx, item_input, labels = \
+                 data_generator._get_pointwise_all_likefism_data(self.dataset, self.num_negatives, self.train_dict)
+                data_iter = DataIterator(user_input, num_idx, item_input, labels,
+                                         batch_size=1, shuffle=True)
             num_training_instances = len(user_input)
             total_loss = 0.0
             training_start_time = time()
@@ -276,6 +276,7 @@ class NAIS(AbstractRecommender):
                     loss, _ = self.sess.run((self.loss, self.optimizer), feed_dict=feed_dict)
                     total_loss += loss
             else:
+                """
                 for index in range(len(batch_length)-1):
                     temp = pad_sequences(user_input[batch_length[index]:batch_length[index+1]], value=self.num_items)
                     feed_dict = {self.user_input: temp,
@@ -283,6 +284,19 @@ class NAIS(AbstractRecommender):
                                  self.item_input: item_input[batch_length[index]:batch_length[index+1]],
                                  self.labels: labels[batch_length[index]:batch_length[index+1]]}
                     loss, _ = self.sess.run((self.loss, self.optimizer), feed_dict=feed_dict)
+                    print(loss)
+                    total_loss += loss
+                """
+                for index, (user_input, num_idx, item_input, labels) in enumerate(data_iter):
+                    feed_dict = {
+                        self.user_input: user_input,
+                        self.num_idx: num_idx,
+                        self.item_input: item_input,
+                        self.labels: labels
+                    }
+                    loss, _ = self.sess.run((self.loss, self.optimizer), feed_dict=feed_dict)
+                    if index % 10000 == 0:
+                        print(index)
                     total_loss += loss
 
             self.logger.info("[iter %d : loss : %f, time: %f]" % (epoch, total_loss/num_training_instances,
@@ -321,7 +335,7 @@ class NAIS(AbstractRecommender):
         batch_length = [0]
         last_point = 0
         cnt = 0
-        shrehold = 40
+        shrehold = 80
         global_user_cnt = 0
         for _i_, u in enumerate(indices):
            if (cnt - last_point+1) * len(self.train_dict[u]) > shrehold:

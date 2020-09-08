@@ -15,6 +15,9 @@ import warnings
 import multiprocessing
 import os
 import logging
+import xlrd
+import xlwt
+from xlutils.copy import copy
 
 class SLIM(AbstractRecommender):
     """
@@ -52,7 +55,54 @@ class SLIM(AbstractRecommender):
         self.numCells = None
 
     def do_col(self, currentItem):
-        print(currentItem)
+        y = self.train_mat[:, currentItem].toarray()
+        if(currentItem % 10 == 0):
+            logging.warning(currentItem)
+        # set the j-th column of X to zero
+        start_pos = self.train_mat.indptr[currentItem]
+        end_pos = self.train_mat.indptr[currentItem + 1]
+
+        current_item_data_backup = self.train_mat.data[start_pos: end_pos].copy()
+        self.train_mat.data[start_pos: end_pos] = 0.0  # ensure wjj can be 0
+
+        # fit one ElasticNet model per column
+        self.model.fit(self.train_mat, y)
+
+        # self.model.coef_ contains the coefficient of the ElasticNet model
+        # let's keep only the non-zero values
+
+        # Select topK values
+        # Sorting is done in three steps. Faster then plain np.argsort for higher number of items
+        # - Partition the data to extract the set of relevant items
+        # - Sort only the relevant items
+        # - Get the original item index
+
+        nonzero_model_coef_index = self.model.sparse_coef_.indices
+        nonzero_model_coef_value = self.model.sparse_coef_.data
+
+        local_topK = min(len(nonzero_model_coef_value) - 1, self.Top_k_sparse)
+
+        relevant_items_partition = (-nonzero_model_coef_value).argpartition(local_topK)[0:local_topK]
+        relevant_items_partition_sorting = np.argsort(-nonzero_model_coef_value[relevant_items_partition])
+        ranking = relevant_items_partition[relevant_items_partition_sorting]
+
+        self.lock.acquire()
+        for index in range(len(ranking)):
+
+            if self.numCells.value == len(self.rows):
+                self.rows.extend([0]*self.dataBlock)
+                self.cols.extend([0]*self.dataBlock)
+                self.values.extend([0.0]*self.dataBlock)
+
+            self.rows[self.numCells.value] = nonzero_model_coef_index[ranking[index]]
+            self.cols[self.numCells.value] = currentItem
+            self.values[self.numCells.value] = nonzero_model_coef_value[ranking[index]]
+
+            self.numCells.value += 1
+        self.lock.release()
+        # finally, replace the original values of the j-th column
+        self.train_mat.data[start_pos:end_pos] = current_item_data_backup
+
 
     def build_graph(self):
         l1_ratio = self.l1/(2*self.l2 + self.l1)
@@ -83,9 +133,9 @@ class SLIM(AbstractRecommender):
         self.values = manager.list([0.0] * self.dataBlock)
         self.numCells = manager.Value('i', 0)
         self.lock = manager.Lock()
-        pool = multiprocessing.Pool(8)
+        pool = multiprocessing.Pool(5)
         # fit each item's factors sequentially (not in parallel)
-        pool.map(self.do_col, range(10))
+        pool.map(self.do_col, range(self.num_items))
         pool.close()
         pool.join()
         # generate the sparse weight matrix
@@ -95,6 +145,17 @@ class SLIM(AbstractRecommender):
 
     def train_model(self):
         self.logger.info(self.evaluator.metrics_info())
+        a = self.evaluate_val().split()
+        oldWb = xlrd.open_workbook("SLIM.xls")
+        oldWbS = oldWb.sheet_by_index(0)
+        newWb = copy(oldWb)
+        newWs = newWb.get_sheet(0)
+        inserRowNo = oldWbS.nrows
+        for colIndex in range(15):
+            newWs.write(inserRowNo, colIndex, float(a[colIndex]))
+        newWs.write(inserRowNo, 15, self.l1);
+        newWs.write(inserRowNo, 16, self.l2);
+        newWb.save('SLIM.xls')
 
     @timer
     def evaluate(self):
@@ -108,8 +169,9 @@ class SLIM(AbstractRecommender):
         if candidate_items is None:
             return self.ratings[user_ids]
         else:
-            ratings = None
-            """waiting to complete"""
+            ratings = []
+            for u, eval_items_by_u in zip(user_ids, candidate_items):
+                ratings.append([self.ratings[u][i] for i in eval_items_by_u])
         return ratings
 
     def save_model(self):

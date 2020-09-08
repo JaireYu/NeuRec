@@ -10,6 +10,9 @@ import numpy as np
 from model.AbstractRecommender import AbstractRecommender
 import tensorflow as tf
 from util import timer
+import xlwt
+import xlrd
+from xlutils.copy import copy
 class pureSVD(AbstractRecommender):
     """ PureSVDRecommender
     DOI:https://doi.org/10.1145/1864708.1864721
@@ -51,15 +54,26 @@ class pureSVD(AbstractRecommender):
         return self.evaluator_val.evaluate(self)
 
     def train_model(self, random_seed = None):
-        pass
+        self.logger.info(self.evaluator.metrics_info())
+        self.ratings_matrix = self.USER_factors.dot(self.ITEM_factors)
+        a = self.evaluate_val().split()
+        oldWb = xlrd.open_workbook("PureSVD.xls", formatting_info=True);
+        oldWbS = oldWb.sheet_by_index(0)
+        newWb = copy(oldWb)
+        newWs = newWb.get_sheet(0)
+        inserRowNo = oldWbS.nrows
+        for colIndex in range(15):
+            newWs.write(inserRowNo, colIndex, float(a[colIndex]));
+        newWs.write(inserRowNo, 15, self.num_factors);
+        newWb.save('PureSVD.xls')
 
-    def predict(self, user_ids, candidate_items=None):
+    def predict(self, user_ids, candidate_items):
         if candidate_items is None:
-            ratings = self.USER_factors.dot(self.ITEM_factors)
-            return ratings[user_ids]
+            return self.ratings_matrix[user_ids]
         else:
-            ratings = None
-            """waiting to complete"""
+            ratings = []
+            for u, eval_items_by_u in zip(user_ids, candidate_items):
+                ratings.append([self.ratings_matrix[u][i] for i in eval_items_by_u])
         return ratings
 
     def save_model(self):
